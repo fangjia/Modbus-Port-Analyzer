@@ -38,7 +38,7 @@ if not "%PCAP_FILE%"=="" (
     SET PCAP_PARAM=-PcapFile %PCAP_FILE%
 )
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0Analyze-ModbusPorts.ps1" %PCAP_PARAM% -TargetIP "%TARGET_IP:"=%" -TargetPort %TARGET_PORT% -UnitId %UNIT_ID% %OUTPUT_PARAM%
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0src\Analyze-ModbusPorts.ps1" %PCAP_PARAM% -TargetIP "%TARGET_IP:"=%" -TargetPort %TARGET_PORT% -UnitId %UNIT_ID% %OUTPUT_PARAM%
 
 echo.
 echo =============================================

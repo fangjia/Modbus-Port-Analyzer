@@ -1,9 +1,7 @@
-# Ignore packet captures
-*.pcap
-*.pcapng
-
-# Ignore analysis reports
-*.csv
+# Ignore everything in the data folder
+data/*
+# Except the placeholder if needed (optional)
+# !data/.gitkeep
 *_Summary.txt
 
 # Ignore PowerShell execution logs or temp files if any

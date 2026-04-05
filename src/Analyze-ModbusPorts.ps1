@@ -60,14 +60,18 @@ if (-not $tsharkPath) {
 
 # 2. 驗證或選擇來源檔案
 if (-not $PcapFile) {
-    # 如果未指定，則掃描當前目錄下的封包檔
-    $files = @(Get-ChildItem -Path . -File | Where-Object { $_.Extension -match '^\.pcap(?:ng)?$' } | Select-Object -ExpandProperty Name)
+    # 如果未指定，則掃描 ../data 目錄下的封包檔
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+    $dataDir = Join-Path $scriptDir "..\data"
+    if (-not (Test-Path $dataDir)) { New-Item -ItemType Directory -Path $dataDir -Force | Out-Null }
+    
+    $files = @(Get-ChildItem -Path $dataDir -File | Where-Object { $_.Extension -match '^\.pcap(?:ng)?$' } | Select-Object -ExpandProperty Name)
     if ($files.Count -eq 0) {
         Write-Error "未提供 -PcapFile 參數，且當前目錄下找不到任何 .pcapng 或 .pcap 檔案！"
         exit 1
     } elseif ($files.Count -eq 1) {
-        $PcapFile = $files[0]
-        Write-Host "自動選擇目錄中唯一的封包檔: $PcapFile" -ForegroundColor Yellow
+        $PcapFile = Join-Path $dataDir $files[0]
+        Write-Host "自動選擇 data 目錄中唯一的封包檔: $($files[0])" -ForegroundColor Yellow
     } else {
         $selectedIndex = 0
         try { [System.Console]::CursorVisible = $false } catch {}
@@ -87,7 +91,7 @@ if (-not $PcapFile) {
                     Write-Host ""
                     $sel = Read-Host "請輸入括號內的數字編號"
                     if ($sel -match '^\d+$' -and [int]$sel -lt $files.Count) {
-                        $PcapFile = $files[[int]$sel]
+                        $PcapFile = Join-Path $dataDir $files[[int]$sel]
                         break
                     } else {
                         Write-Error "選擇無效或取消。"
@@ -122,7 +126,7 @@ if (-not $PcapFile) {
                     $selectedIndex++
                     if ($selectedIndex -ge $files.Count) { $selectedIndex = 0 }
                 } elseif ($key.Key -eq 'Enter') {
-                    $PcapFile = $files[$selectedIndex]
+                    $PcapFile = Join-Path $dataDir $files[$selectedIndex]
                     Clear-Host
                     break
                 } elseif ($key.Key -eq 'Escape') {
