@@ -1,8 +1,8 @@
 # Ignore everything in the data folder
 data/*
-# Except the placeholder if needed (optional)
-# !data/.gitkeep
-*_Summary.txt
+# 但破例允許 commit 輕量的分析總結 (.txt) 報告作為紀錄
+!data/*_Summary.txt
+# (注意：龐大的 pcap 與 csv 仍會被完全阻擋以免當機)
 
 # Ignore PowerShell execution logs or temp files if any
 *.log
