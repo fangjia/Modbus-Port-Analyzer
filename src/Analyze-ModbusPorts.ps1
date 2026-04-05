@@ -44,6 +44,7 @@ $tsharkPath = $null
 foreach ($path in $tsharkPaths) {
     if (Test-Path $path) {
         $tsharkPath = $path
+        $global:capinfosPath = Join-Path (Split-Path $path -Parent) "capinfos.exe"
         break
     }
 }
@@ -200,6 +201,22 @@ foreach ($port in $validUnitPorts) {
     "$port,$status,$UnitId" | Out-File -FilePath $OutputFile -Append -Encoding UTF8
 }
 
+$durationStr = "未知/無法取得"
+$timeRangeStr = "未知/無法取得"
+if (Test-Path $global:capinfosPath) {
+    try {
+        $info = & $global:capinfosPath -u -a -e $PcapFile
+        $matchDuration = $info | Select-String "Capture duration:\s*(.*)"
+        $matchStart = $info | Select-String "Earliest packet time:\s*(.*)"
+        $matchEnd = $info | Select-String "Latest packet time:\s*(.*)"
+        
+        if ($matchDuration) { $durationStr = $matchDuration.Matches.Groups[1].Value }
+        if ($matchStart -and $matchEnd) { 
+            $timeRangeStr = "$($matchStart.Matches.Groups[1].Value) ~ $($matchEnd.Matches.Groups[1].Value)" 
+        }
+    } catch {}
+}
+
 $reportFile = $OutputFile -replace '\.csv$', '_Summary.txt'
 $reportContent = @"
 =============================================
@@ -207,6 +224,8 @@ $reportContent = @"
 =============================================
 🕒 分析時間: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 📂 來源封包: $PcapFile
+⏱️ 側錄時間: $timeRangeStr
+⏳ 側錄長度: $durationStr
 🎯 通訊目標: $TargetIP : $TargetPort (Unit ID: $UnitId)
 
 📊 分析統計:
