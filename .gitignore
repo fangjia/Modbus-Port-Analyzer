@@ -1,0 +1,9 @@
+# Ignore packet captures
+*.pcap
+*.pcapng
+
+# Ignore analysis reports
+*.csv
+
+# Ignore PowerShell execution logs or temp files if any
+*.log
