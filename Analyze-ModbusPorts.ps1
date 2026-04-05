@@ -196,11 +196,43 @@ foreach ($port in $validUnitPorts) {
     "$port,$status,$UnitId" | Out-File -FilePath $OutputFile -Append -Encoding UTF8
 }
 
+$reportFile = $OutputFile -replace '\.csv$', '_Summary.txt'
+$reportContent = @"
+=============================================
+📜 Modbus TCP 分析總結報告
+=============================================
+🕒 分析時間: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+📂 來源封包: $PcapFile
+🎯 通訊目標: $TargetIP : $TargetPort (Unit ID: $UnitId)
+
+📊 分析統計:
+---------------------------------------------
+📦 參與查詢的總 Port 數 : $($releasedCount + $unclosedCount)
+  ✔️ 已正確釋放  (FIN/RST): $releasedCount
+  ❌ 未釋放 (無交握中斷記錄): $unclosedCount
+
+"@
+
+if ($unclosedCount -gt 0) {
+    $reportContent += "`n⚠️ 警告：發現 $unclosedCount 個未正確關閉可能洩漏的 Ports：`n"
+    # 取出未釋放的 ports
+    $unclosedPortsList = @()
+    foreach ($p in $validUnitPorts) {
+        if (-not ($closedPorts -contains $p)) { $unclosedPortsList += $p }
+    }
+    $reportContent += ($unclosedPortsList -join ', ') + "`n"
+} else {
+    $reportContent += "`n✅ 恭喜：所有被檢測出的連線埠口皆已被伺服器或客戶端完美釋放！`n"
+}
+
+$reportContent | Out-File -FilePath $reportFile -Encoding UTF8
+
 Write-Host "--------------------------------------------="
 Write-Host "🎉 分析處理完成！" -ForegroundColor Cyan
 Write-Host "📦 參與查詢的總 Port 數 : $($releasedCount + $unclosedCount)"
 Write-Host "  ✔️ 已正確釋放  (FIN/RST): $releasedCount" -ForegroundColor Green
 Write-Host "  ❌ 未釋放 (無交握中斷記錄): $unclosedCount" -ForegroundColor Red
 Write-Host ""
-Write-Host "📊 詳細報表已匯出至: $OutputFile" -ForegroundColor Yellow
+Write-Host "📊 詳細資料 CSV 已匯出至: $OutputFile" -ForegroundColor Yellow
+Write-Host "📝 整體總結報告 已匯出至: $reportFile" -ForegroundColor Yellow
 Write-Host "=============================================" -ForegroundColor Cyan

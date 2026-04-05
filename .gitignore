@@ -4,6 +4,7 @@
 
 # Ignore analysis reports
 *.csv
+*_Summary.txt
 
 # Ignore PowerShell execution logs or temp files if any
 *.log
