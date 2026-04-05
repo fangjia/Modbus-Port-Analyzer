@@ -29,7 +29,7 @@ param(
     [int]$TargetPort = 33999,
     
     [Parameter(Mandatory=$false)]
-    [int]$UnitId = 0,
+    [string]$UnitId = "",
     
     [Parameter(Mandatory=$false)]
     [string]$OutputFile
@@ -59,7 +59,23 @@ if (-not $tsharkPath) {
     }
 }
 
-# 2. 驗證或選擇來源檔案
+# 2. 驗證或設定 Unit ID
+if ([string]::IsNullOrWhiteSpace($UnitId)) {
+    Write-Host "=================================================" -ForegroundColor Cyan
+    $uiInput = Read-Host " 請輸入欲分析的 Modbus Unit ID (按下 Enter 預設為 0)"
+    if ([string]::IsNullOrWhiteSpace($uiInput)) {
+        $UnitId = "0"
+    } else {
+        if ($uiInput -match '^\d+$') {
+            $UnitId = $uiInput
+        } else {
+            Write-Error "輸入無效！Unit ID 必須為數字。"
+            exit 1
+        }
+    }
+}
+
+# 3. 驗證或選擇來源檔案
 if (-not $PcapFile) {
     # 如果未指定，則掃描 ../data 目錄下的封包檔
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -151,7 +167,7 @@ if (-not $PcapFile) {
     exit 1
 }
 
-# 3. 處理預設輸出檔案路徑
+# 4. 處理預設輸出檔案路徑
 if (-not $OutputFile) {
     $parent = [System.IO.Path]::GetDirectoryName($PcapFile)
     if ([string]::IsNullOrEmpty($parent)) { $parent = ".\" }

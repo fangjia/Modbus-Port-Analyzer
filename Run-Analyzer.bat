@@ -19,8 +19,8 @@ SET TARGET_IP="192.168.100.150"
 REM 3. Target server Port (Standard Modbus is 502, here 33999)
 SET TARGET_PORT=33999
 
-REM 4. Target Modbus Unit ID
-SET UNIT_ID=0
+REM 4. Target Modbus Unit ID (Leave blank to prompt interactively!)
+SET UNIT_ID=
 
 REM 5. Custom output CSV file name (Leave blank to auto-generate)
 SET OUTPUT_FILE=
@@ -38,7 +38,12 @@ if not "%PCAP_FILE%"=="" (
     SET PCAP_PARAM=-PcapFile %PCAP_FILE%
 )
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0src\Analyze-ModbusPorts.ps1" %PCAP_PARAM% -TargetIP "%TARGET_IP:"=%" -TargetPort %TARGET_PORT% -UnitId %UNIT_ID% %OUTPUT_PARAM%
+SET UNIT_PARAM=
+if not "%UNIT_ID%"=="" (
+    SET UNIT_PARAM=-UnitId %UNIT_ID%
+)
+
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0src\Analyze-ModbusPorts.ps1" %PCAP_PARAM% -TargetIP "%TARGET_IP:"=%" -TargetPort %TARGET_PORT% %UNIT_PARAM% %OUTPUT_PARAM%
 
 echo.
 echo =============================================
