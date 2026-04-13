@@ -260,6 +260,51 @@ if ($unclosedCount -gt 0) {
         if (-not ($closedPorts -contains $p)) { $unclosedPortsList += $p }
     }
     $reportContent += ($unclosedPortsList -join ', ') + "`n"
+
+    # 查出這些未關閉的 Port，到底 Query 過哪些 Unit ID
+    $reportContent += "`n📋 未釋放 Port 的 Unit ID 統計表:`n"
+    $reportContent += "Port      | Queried Unit IDs`n"
+    $reportContent += "----------------------------`n"
+    
+    $portToUids = @{}
+    
+    # 進行分批查詢，以防 unclosed ports 數量過多導致命令列字數破表
+    $batchSize = 200
+    for ($i = 0; $i -lt $unclosedPortsList.Count; $i += $batchSize) {
+        $batch = $unclosedPortsList | Select-Object -Skip $i -First $batchSize
+        $portFilterStr = ($batch | ForEach-Object { "tcp.srcport == $_" }) -join ' or '
+        $multiUidFilter = "ip.dst == $TargetIP and tcp.dstport == $TargetPort and ($portFilterStr) and mbtcp.unit_id"
+        
+        Write-Host "      [補充分析] 正在掃描未釋放連線曾查詢過的 Unit IDs... (批次 $($i/$batchSize + 1))" -ForegroundColor DarkCyan
+        $portUidMappings = & $tsharkPath -r $PcapFile -Y $multiUidFilter -T fields -e tcp.srcport -e mbtcp.unit_id
+        
+        foreach ($line in $portUidMappings) {
+            $parts = $line -split "`t"
+            if ($parts.Length -eq 2) {
+                $sp = $parts[0].Trim()
+                $uid = $parts[1].Trim()
+                if (-not $portToUids.ContainsKey($sp)) {
+                    $portToUids[$sp] = @()
+                }
+                if ($uid -ne "" -and $uid -match '^\d+$') {
+                    if ($portToUids[$sp] -notcontains $uid) {
+                        $portToUids[$sp] += $uid
+                    }
+                }
+            }
+        }
+    }
+    
+    foreach ($p in $unclosedPortsList) {
+        if ($portToUids.ContainsKey($p) -and $portToUids[$p].Count -gt 0) {
+            $sortedUids = $portToUids[$p] | Sort-Object {[int]$_}
+            $uidStr = $sortedUids -join ', '
+        } else {
+            $uidStr = "無 / 未找到封包"
+        }
+        $reportContent += " $p".PadRight(10) + "| " + $uidStr + "`n"
+    }
+
 } else {
     $reportContent += "`n✅ 恭喜：所有被檢測出的連線埠口皆已被伺服器或客戶端完美釋放！`n"
 }
@@ -271,7 +316,29 @@ Write-Host "🎉 分析處理完成！" -ForegroundColor Cyan
 Write-Host "📦 參與查詢的總 Port 數 : $($releasedCount + $unclosedCount)"
 Write-Host "  ✔️ 已正確釋放  (FIN/RST): $releasedCount" -ForegroundColor Green
 Write-Host "  ❌ 未釋放 (無交握中斷記錄): $unclosedCount" -ForegroundColor Red
+
+if ($unclosedCount -gt 0) {
+    Write-Host "`n⚠️ 警告：發現 $unclosedCount 個未正確關閉可能洩漏的 Ports：" -ForegroundColor Red
+    Write-Host ($unclosedPortsList -join ', ') -ForegroundColor Red
+    Write-Host ""
+    Write-Host "📋 未釋放 Port 的 Unit ID 統計表:" -ForegroundColor Yellow
+    Write-Host "Port      | Queried Unit IDs" -ForegroundColor Yellow
+    Write-Host "----------------------------" -ForegroundColor Yellow
+    foreach ($p in $unclosedPortsList) {
+        if ($portToUids.ContainsKey($p) -and $portToUids[$p].Count -gt 0) {
+            $sortedUids = $portToUids[$p] | Sort-Object {[int]$_}
+            $uidStr = $sortedUids -join ', '
+        } else {
+            $uidStr = "無 / 未找到封包"
+        }
+        Write-Host (" " + $p.PadRight(9) + "| " + $uidStr) -ForegroundColor DarkYellow
+    }
+} else {
+    Write-Host "`n✅ 恭喜：所有被檢測出的連線埠口皆已被伺服器或客戶端完美釋放！" -ForegroundColor Green
+}
+
 Write-Host ""
 Write-Host "📊 詳細資料 CSV 已匯出至: $OutputFile" -ForegroundColor Yellow
 Write-Host "📝 整體總結報告 已匯出至: $reportFile" -ForegroundColor Yellow
 Write-Host "=============================================" -ForegroundColor Cyan
+
