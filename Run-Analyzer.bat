@@ -28,6 +28,7 @@ SET OUTPUT_FILE=
 REM ---------------------------------------------------------
 REM EXECUTION LOGIC
 REM ---------------------------------------------------------
+:EXEC_LOOP
 SET OUTPUT_PARAM=
 if not "%OUTPUT_FILE%"=="" (
     SET OUTPUT_PARAM=-OutputFile %OUTPUT_FILE%
@@ -47,6 +48,8 @@ PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0src\Analyze-ModbusPort
 
 echo.
 echo =============================================
-echo   Analysis Complete. Press any key to exit.
+echo   Analysis Complete. Press any key to return to file selection, until ESC is pressed to exit.
 echo =============================================
-pause >nul
+PowerShell -NoProfile -Command "$Host.UI.RawUI.FlushInputBuffer(); $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown'); if ($key.VirtualKeyCode -eq 27) { exit 1 } else { exit 0 }"
+if %ERRORLEVEL% equ 1 exit /b
+goto EXEC_LOOP
