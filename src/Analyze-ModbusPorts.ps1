@@ -1,28 +1,28 @@
-<#
+ï»¿<#
 .SYNOPSIS
-    ¤ÀªR Pcap/Pcapng ÀÉ®×¤¤ Modbus TCP Query ªº Port ÄÀ©ñª¬ºA¡C
+    åˆ†æ Pcap/Pcapng æª”æ¡ˆä¸­ Modbus TCP Query çš„ Port é‡‹æ”¾ç‹€æ…‹ã€‚
 .DESCRIPTION
-    ¦¹¤u¨ã§Q¥Î TShark (Wireshark) Åª¨ú«Ê¥]ÀÉ¡A¨Ã¤ÀªR°w¹ï«ü©w¥Ø¼Ğ IP »P¯S©w Unit ID ªº¬d¸ß (Query) ³s½u¡C
-    ±µµÛ¤ñ¹ï³o¨Ç³s½uªº Port ¬O´¿§_°e¥X©Î¦¬¨ì FIN ©Î RST ¤¤Â_¥æ´¤¡A²£¥X¡u¤wÄÀ©ñ¡v»P¡u¥¼ÄÀ©ñ¡vªºª¬ºA²M³æ¡C
+    æ­¤å·¥å…·åˆ©ç”¨ TShark (Wireshark) è®€å–å°åŒ…æª”ï¼Œä¸¦åˆ†æé‡å°æŒ‡å®šç›®æ¨™ IP èˆ‡ç‰¹å®š Unit ID çš„æŸ¥è©¢ (Query) é€£ç·šã€‚
+    æ¥è‘—æ¯”å°é€™äº›é€£ç·šçš„ Port æ˜¯æ›¾å¦é€å‡ºæˆ–æ”¶åˆ° FIN æˆ– RST ä¸­æ–·äº¤æ¡ï¼Œç”¢å‡ºã€Œå·²é‡‹æ”¾ã€èˆ‡ã€Œæœªé‡‹æ”¾ã€çš„ç‹€æ…‹æ¸…å–®ã€‚
 .PARAMETER PcapFile
-    (¥²­n) «ü©w­n¤ÀªRªº .pcap ©Î .pcapng ÀÉ®×¸ô®|¡C
+    (å¿…è¦) æŒ‡å®šè¦åˆ†æçš„ .pcap æˆ– .pcapng æª”æ¡ˆè·¯å¾‘ã€‚
 .PARAMETER TargetIP
-    (¥²­n) «ü©w¦øªA¾¹ºİ (¥Ø¼Ğºİ) ªº IP ¦a§}¡C
+    (å¿…è¦) æŒ‡å®šä¼ºæœå™¨ç«¯ (ç›®æ¨™ç«¯) çš„ IP åœ°å€ã€‚
 .PARAMETER TargetPort
-    (¿ï¥Î) «ü©w¦øªA¾¹ºİªº Port¡A¹w³]¬° 33999¡C
+    (é¸ç”¨) æŒ‡å®šä¼ºæœå™¨ç«¯çš„ Portï¼Œé è¨­ç‚º 33999ã€‚
 .PARAMETER UnitId
-    (¿ï¥Î) «ü©w­n¬d¸ßªº Modbus Unit ID¡A¹w³]¬° 0¡C
+    (é¸ç”¨) æŒ‡å®šè¦æŸ¥è©¢çš„ Modbus Unit IDï¼Œé è¨­ç‚º 0ã€‚
 .PARAMETER OutputFile
-    (¿ï¥Î) ¶×¥Xªº CSV ÀÉ®×¸ô®|¡C­Y¥¼«ü©w¡A«h¿é¥X¦Ü­ì©lÀÉ®×¦P¤@­Ó¥Ø¿ı¤U¡AÀÉ¦W¦Û°Êªş¥[¦r§À¡C
+    (é¸ç”¨) åŒ¯å‡ºçš„ CSV æª”æ¡ˆè·¯å¾‘ã€‚è‹¥æœªæŒ‡å®šï¼Œå‰‡è¼¸å‡ºè‡³åŸå§‹æª”æ¡ˆåŒä¸€å€‹ç›®éŒ„ä¸‹ï¼Œæª”åè‡ªå‹•é™„åŠ å­—å°¾ã€‚
 .EXAMPLE
-    # ¦b©R¥O´£¥Ü¦r¤¸©Î PowerShell ¤U°õ¦æ:
+    # åœ¨å‘½ä»¤æç¤ºå­—å…ƒæˆ– PowerShell ä¸‹åŸ·è¡Œ:
     .\Analyze-ModbusPorts.ps1 -PcapFile "outport_202604060018.pcapng" -TargetIP "192.168.100.150"
 #>
 param(
-    [Parameter(Mandatory=$false, HelpMessage="½Ğ¿é¤J­n¤ÀªRªº pcap/pcapng ÀÉ®×¸ô®|")]
+    [Parameter(Mandatory=$false, HelpMessage="è«‹è¼¸å…¥è¦åˆ†æçš„ pcap/pcapng æª”æ¡ˆè·¯å¾‘")]
     [string]$PcapFile,
     
-    [Parameter(Mandatory=$true, HelpMessage="½Ğ¿é¤J¦øªA¾¹ºİ¥Ø¼Ğ IP (¦p: 192.168.100.150)")]
+    [Parameter(Mandatory=$true, HelpMessage="è«‹è¼¸å…¥ä¼ºæœå™¨ç«¯ç›®æ¨™ IP (å¦‚: 192.168.100.150)")]
     [string]$TargetIP,
     
     [Parameter(Mandatory=$false)]
@@ -35,7 +35,7 @@ param(
     [string]$OutputFile
 )
 
-# 1. ½T»{ tshark ¦w¸Ë¸ô®|
+# 1. ç¢ºèª tshark å®‰è£è·¯å¾‘
 $tsharkPaths = @(
     "C:\Program Files\Wireshark\tshark.exe",
     "C:\Program Files (x86)\Wireshark\tshark.exe"
@@ -49,77 +49,77 @@ foreach ($path in $tsharkPaths) {
     }
 }
 if (-not $tsharkPath) {
-    # ¦pªG¹w³]¸ô®|§ä¤£¨ì¡A¹Á¸Õ¥ÑÀô¹ÒÅÜ¼Æ´M§ä
+    # å¦‚æœé è¨­è·¯å¾‘æ‰¾ä¸åˆ°ï¼Œå˜—è©¦ç”±ç’°å¢ƒè®Šæ•¸å°‹æ‰¾
     $tsharkInPath = Get-Command "tshark.exe" -ErrorAction SilentlyContinue
     if ($tsharkInPath) {
         $tsharkPath = $tsharkInPath.Source
     } else {
-        Write-Error "§ä¤£¨ì tshark ¤u¨ã¡I½Ğ½T»{¨t²Î¦³¦w¸Ë Wireshark ¨Ã¥]§t tshark.exe¡C"
+        Write-Error "æ‰¾ä¸åˆ° tshark å·¥å…·ï¼è«‹ç¢ºèªç³»çµ±æœ‰å®‰è£ Wireshark ä¸¦åŒ…å« tshark.exeã€‚"
         exit 1
     }
 }
 
-# 2. ÅçÃÒ©Î³]©w Unit ID
+# 2. é©—è­‰æˆ–è¨­å®š Unit ID
 if ([string]::IsNullOrWhiteSpace($UnitId)) {
     Write-Host "=================================================" -ForegroundColor Cyan
-    $uiInput = Read-Host " ½Ğ¿é¤J±ı¤ÀªRªº Modbus Unit ID («ö¤U Enter ¹w³]¬° 0)"
+    $uiInput = Read-Host " è«‹è¼¸å…¥æ¬²åˆ†æçš„ Modbus Unit ID (æŒ‰ä¸‹ Enter é è¨­ç‚º 0)"
     if ([string]::IsNullOrWhiteSpace($uiInput)) {
         $UnitId = "0"
     } else {
         if ($uiInput -match '^\d+$') {
             $UnitId = $uiInput
         } else {
-            Write-Error "¿é¤JµL®Ä¡IUnit ID ¥²¶·¬°¼Æ¦r¡C"
+            Write-Error "è¼¸å…¥ç„¡æ•ˆï¼Unit ID å¿…é ˆç‚ºæ•¸å­—ã€‚"
             exit 1
         }
     }
 }
 
-# 3. ÅçÃÒ©Î¿ï¾Ü¨Ó·½ÀÉ®×
+# 3. é©—è­‰æˆ–é¸æ“‡ä¾†æºæª”æ¡ˆ
 if (-not $PcapFile) {
-    # ¦pªG¥¼«ü©w¡A«h±½´y ../data ¥Ø¿ı¤Uªº«Ê¥]ÀÉ
+    # å¦‚æœæœªæŒ‡å®šï¼Œå‰‡æƒæ ../data ç›®éŒ„ä¸‹çš„å°åŒ…æª”
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $dataDir = Join-Path $scriptDir "..\data"
     if (-not (Test-Path $dataDir)) { New-Item -ItemType Directory -Path $dataDir -Force | Out-Null }
     
     $files = @(Get-ChildItem -Path $dataDir -File | Where-Object { $_.Extension -match '^\.pcap(?:ng)?$' } | Select-Object -ExpandProperty Name)
     if ($files.Count -eq 0) {
-        Write-Error "¥¼´£¨Ñ -PcapFile °Ñ¼Æ¡A¥B·í«e¥Ø¿ı¤U§ä¤£¨ì¥ô¦ó .pcapng ©Î .pcap ÀÉ®×¡I"
+        Write-Error "æœªæä¾› -PcapFile åƒæ•¸ï¼Œä¸”ç•¶å‰ç›®éŒ„ä¸‹æ‰¾ä¸åˆ°ä»»ä½• .pcapng æˆ– .pcap æª”æ¡ˆï¼"
         exit 1
     } elseif ($files.Count -eq 1) {
         $PcapFile = Join-Path $dataDir $files[0]
-        Write-Host "¦Û°Ê¿ï¾Ü data ¥Ø¿ı¤¤°ß¤@ªº«Ê¥]ÀÉ: $($files[0])" -ForegroundColor Yellow
+        Write-Host "è‡ªå‹•é¸æ“‡ data ç›®éŒ„ä¸­å”¯ä¸€çš„å°åŒ…æª”: $($files[0])" -ForegroundColor Yellow
     } else {
         $selectedIndex = 0
         try { [System.Console]::CursorVisible = $false } catch {}
         try {
             while ($true) {
-                # °»´ú¬O§_¬°«D¤¬°Ê¦¡Àô¹Ò©Î­I´º°õ¦æ
+                # åµæ¸¬æ˜¯å¦ç‚ºéäº’å‹•å¼ç’°å¢ƒæˆ–èƒŒæ™¯åŸ·è¡Œ
                 $isRedirected = $true
                 try { $isRedirected = [System.Console]::IsInputRedirected } catch {}
                 
                 if ($isRedirected) {
                     Write-Host "=================================================" -ForegroundColor Cyan
-                    Write-Host " °»´ú¨ì²×ºİ¾÷¤£¤ä´©¤è¦VÁä¿ï³æ¡A½Ğ¤â°Ê¿ï¾Ü" -ForegroundColor White
+                    Write-Host " åµæ¸¬åˆ°çµ‚ç«¯æ©Ÿä¸æ”¯æ´æ–¹å‘éµé¸å–®ï¼Œè«‹æ‰‹å‹•é¸æ“‡" -ForegroundColor White
                     Write-Host "=================================================" -ForegroundColor Cyan
                     for ($i = 0; $i -lt $files.Count; $i++) {
                         Write-Host "  [$i] $($files[$i])"
                     }
                     Write-Host ""
-                    $sel = Read-Host "½Ğ¿é¤J¬A¸¹¤ºªº¼Æ¦r½s¸¹"
+                    $sel = Read-Host "è«‹è¼¸å…¥æ‹¬è™Ÿå…§çš„æ•¸å­—ç·¨è™Ÿ"
                     if ($sel -match '^\d+$' -and [int]$sel -lt $files.Count) {
                         $PcapFile = Join-Path $dataDir $files[[int]$sel]
                         break
                     } else {
-                        Write-Error "¿ï¾ÜµL®Ä©Î¨ú®ø¡C"
+                        Write-Error "é¸æ“‡ç„¡æ•ˆæˆ–å–æ¶ˆã€‚"
                         exit 1
                     }
                 }
 
                 Clear-Host
                 Write-Host "=================================================" -ForegroundColor Cyan
-                Write-Host " ½Ğ¨Ï¥ÎÁä½L¤è¦VÁä [¡ô] [¡õ] ¿ï¾Ü­n¤ÀªRªº«Ê¥]ÀÉ" 
-                Write-Host " ¿ï¾Ü§¹²¦«á«ö¤U [Enter] ¶}©l¤ÀªR¡A«ö [Esc] °h¥X"
+                Write-Host " è«‹ä½¿ç”¨éµç›¤æ–¹å‘éµ [â†‘] [â†“] é¸æ“‡è¦åˆ†æçš„å°åŒ…æª”" 
+                Write-Host " é¸æ“‡å®Œç•¢å¾ŒæŒ‰ä¸‹ [Enter] é–‹å§‹åˆ†æï¼ŒæŒ‰ [Esc] é€€å‡º"
                 Write-Host "=================================================" -ForegroundColor Cyan
                 for ($i = 0; $i -lt $files.Count; $i++) {
                     if ($i -eq $selectedIndex) {
@@ -132,7 +132,7 @@ if (-not $PcapFile) {
                 
                 $key = $null
                 try { $key = [System.Console]::ReadKey($true) } catch { 
-                    Write-Error "²×ºİ¤£¤ä´©Áä½LÂ^¨ú¡A½Ğ¨Ï¥Î°Ñ¼Æ -PcapFile «ü©wÀÉ®×¡C"
+                    Write-Error "çµ‚ç«¯ä¸æ”¯æ´éµç›¤æ“·å–ï¼Œè«‹ä½¿ç”¨åƒæ•¸ -PcapFile æŒ‡å®šæª”æ¡ˆã€‚"
                     exit 1
                 }
                 
@@ -148,7 +148,7 @@ if (-not $PcapFile) {
                     break
                 } elseif ($key.Key -eq 'Escape') {
                     Clear-Host
-                    Write-Host "¤w¨ú®ø¾Ş§@¡C" -ForegroundColor Red
+                    Write-Host "å·²å–æ¶ˆæ“ä½œã€‚" -ForegroundColor Red
                     exit 0
                 }
             }
@@ -156,18 +156,18 @@ if (-not $PcapFile) {
             try { [System.Console]::CursorVisible = $true } catch {}
         }
         
-        # ¤G¦¸¨¾Å@¡AÁ×§K null ¾É­P«á¤è¥ş³¡±Y¼ì
+        # äºŒæ¬¡é˜²è­·ï¼Œé¿å… null å°è‡´å¾Œæ–¹å…¨éƒ¨å´©æ½°
         if ([string]::IsNullOrWhiteSpace($PcapFile)) {
-            Write-Error "ÀÉ®×¿ï¾Ü¤£¥¿½T©Î¤w¨ú®ø¡C"
+            Write-Error "æª”æ¡ˆé¸æ“‡ä¸æ­£ç¢ºæˆ–å·²å–æ¶ˆã€‚"
             exit 1
         }
     }
 } elseif (-not (Test-Path $PcapFile)) {
-    Write-Error "§ä¤£¨ì«ü©wªº«Ê¥]ÀÉ®×: $PcapFile"
+    Write-Error "æ‰¾ä¸åˆ°æŒ‡å®šçš„å°åŒ…æª”æ¡ˆ: $PcapFile"
     exit 1
 }
 
-# 4. ³B²z¹w³]¿é¥XÀÉ®×¸ô®|
+# 4. è™•ç†é è¨­è¼¸å‡ºæª”æ¡ˆè·¯å¾‘
 if (-not $OutputFile) {
     $parent = [System.IO.Path]::GetDirectoryName($PcapFile)
     if ([string]::IsNullOrEmpty($parent)) { $parent = ".\" }
@@ -176,51 +176,51 @@ if (-not $OutputFile) {
 }
 
 Write-Host "=============================================" -ForegroundColor Cyan
-Write-Host " Modbus TCP ³s½u°ğ¤fª¬ºA¤ÀªR¤u¨ã (Port Analyzer)" -ForegroundColor Cyan
+Write-Host " Modbus TCP é€£ç·šåŸ å£ç‹€æ…‹åˆ†æå·¥å…· (Port Analyzer)" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
-Write-Host "?? «Ê¥]ÀÉ®×: $PcapFile"
-Write-Host "?? ³q°T¥Ø¼Ğ: $TargetIP : $TargetPort (Modbus Unit ID: $UnitId)"
-Write-Host "??? TShark   : $tsharkPath"
+Write-Host "ğŸ“‚ å°åŒ…æª”æ¡ˆ: $PcapFile"
+Write-Host "ğŸ¯ é€šè¨Šç›®æ¨™: $TargetIP : $TargetPort (Modbus Unit ID: $UnitId)"
+Write-Host "ğŸ› ï¸ TShark   : $tsharkPath"
 Write-Host "---------------------------------------------"
 
-# ¨BÆJ1: ´£¨ú°e¥X¯S©w Unit ID ¬d¸ß¹Lªº Ports
-Write-Host "[1/4] ¥¿¦b´£¨ú©Ò¦³¹ï Unit $UnitId ¶i¦æ¬d¸ßªº Source Ports..." -ForegroundColor Yellow
+# æ­¥é©Ÿ1: æå–é€å‡ºç‰¹å®š Unit ID æŸ¥è©¢éçš„ Ports
+Write-Host "[1/4] æ­£åœ¨æå–æ‰€æœ‰å° Unit $UnitId é€²è¡ŒæŸ¥è©¢çš„ Source Ports..." -ForegroundColor Yellow
 $filterQuery = "ip.dst == $TargetIP and tcp.dstport == $TargetPort and mbtcp.unit_id == $UnitId"
-Write-Host "      «ü¥O±½´y¤¤... (¤j«¬ÀÉ®×¥i¯à»İ­n¼Æ¤Q¬í)"
+Write-Host "      æŒ‡ä»¤æƒæä¸­... (å¤§å‹æª”æ¡ˆå¯èƒ½éœ€è¦æ•¸åç§’)"
 $unitPorts = & $tsharkPath -r $PcapFile -Y $filterQuery -T fields -e tcp.srcport | Sort-Object -Unique
 $validUnitPorts = $unitPorts | Where-Object { $_ -match '^\d+$' }
-Write-Host "      ?? ²Î­p: ¦@¨Ï¥Î $($validUnitPorts.Count) ­Ó¿W¥ßªº Source Ports¡C" -ForegroundColor Green
+Write-Host "      âœ”ï¸ çµ±è¨ˆ: å…±ä½¿ç”¨ $($validUnitPorts.Count) å€‹ç¨ç«‹çš„ Source Portsã€‚" -ForegroundColor Green
 
-# ¨BÆJ2: ´£¨ú³q°T¶¥¬q¦³¹L FIN ©Î RST ªº Ports (¥Nªí³s½u³Q¥¿±`Ãö³¬©Î­«¸m)
-Write-Host "[2/4] ¥¿¦b«Ø¥ß¨Ã±½´y¥Ñ FIN ©Î RST ²×¤îªº¤wÄÀ©ñ³s½u¦À..." -ForegroundColor Yellow
+# æ­¥é©Ÿ2: æå–é€šè¨Šéšæ®µæœ‰é FIN æˆ– RST çš„ Ports (ä»£è¡¨é€£ç·šè¢«æ­£å¸¸é—œé–‰æˆ–é‡ç½®)
+Write-Host "[2/4] æ­£åœ¨å»ºç«‹ä¸¦æƒæç”± FIN æˆ– RST çµ‚æ­¢çš„å·²é‡‹æ”¾é€£ç·šæ± ..." -ForegroundColor Yellow
 $filterClosed = "ip.addr == $TargetIP and tcp.port == $TargetPort and (tcp.flags.fin == 1 or tcp.flags.reset == 1)"
-Write-Host "      «ü¥O±½´y¤¤..."
+Write-Host "      æŒ‡ä»¤æƒæä¸­..."
 $closedPortsSrc = & $tsharkPath -r $PcapFile -Y $filterClosed -T fields -e tcp.srcport | Sort-Object -Unique
 $closedPortsDst = & $tsharkPath -r $PcapFile -Y $filterClosed -T fields -e tcp.dstport | Sort-Object -Unique
 $closedPorts = ($closedPortsSrc + $closedPortsDst) | Where-Object { $_ -ne $TargetPort.ToString() -and $_ -match '^\d+$' } | Sort-Object -Unique
-Write-Host "      ?? ±½´y§¹¦¨¡C" -ForegroundColor Green
+Write-Host "      âœ”ï¸ æƒæå®Œæˆã€‚" -ForegroundColor Green
 
-# ¨BÆJ3: ¨âÃä¸ê®Æ¶i¦æ¤ñ¹ï¡A¼g¤J³Ì²×ª¬ºA
-Write-Host "[3/4] ¥¿¦b¶i¦æ¥æ¤e¤ñ¹ï¨Ã¶×¥Xª¬ºA²M³æ¦Ü CSV..." -ForegroundColor Yellow
+# æ­¥é©Ÿ3: å…©é‚Šè³‡æ–™é€²è¡Œæ¯”å°ï¼Œå¯«å…¥æœ€çµ‚ç‹€æ…‹
+Write-Host "[3/4] æ­£åœ¨é€²è¡Œäº¤å‰æ¯”å°ä¸¦åŒ¯å‡ºç‹€æ…‹æ¸…å–®è‡³ CSV..." -ForegroundColor Yellow
 $releasedCount = 0
 $unclosedCount = 0
 
 "Port,Status,UnitID" | Out-File -FilePath $OutputFile -Encoding UTF8
 foreach ($port in $validUnitPorts) {
     if ($closedPorts -contains $port) {
-        $status = "¤wÄÀ©ñ (Released)"
+        $status = "å·²é‡‹æ”¾ (Released)"
         $releasedCount++
     } else {
-        $status = "¥¼ÄÀ©ñ (Unclosed)"
+        $status = "æœªé‡‹æ”¾ (Unclosed)"
         $unclosedCount++
     }
     "$port,$status,$UnitId" | Out-File -FilePath $OutputFile -Append -Encoding UTF8
 }
 
-# ¨BÆJ4: ´£¨ú RST «Ê¥]¸ê°T
-Write-Host "[4/4] ¥¿¦b´£¨ú RST (Connection Reset) «Ê¥]¸ê°T..." -ForegroundColor Yellow
+# æ­¥é©Ÿ4: æå– RST å°åŒ…è³‡è¨Š
+Write-Host "[4/4] æ­£åœ¨æå– RST (Connection Reset) å°åŒ…è³‡è¨Š..." -ForegroundColor Yellow
 $filterRst = "ip.addr == $TargetIP and tcp.port == $TargetPort and tcp.connection.rst"
-Write-Host "      «ü¥O±½´y¤¤..."
+Write-Host "      æŒ‡ä»¤æƒæä¸­..."
 $tsharkRstRaw = & $tsharkPath -r $PcapFile -Y $filterRst
 $rstPackets = @()
 $rstCount = 0
@@ -228,7 +228,7 @@ $rstCount = 0
 if ($tsharkRstRaw) {
     if ($tsharkRstRaw -is [array]) { $rstCount = $tsharkRstRaw.Count } else { $rstCount = 1; $tsharkRstRaw = @($tsharkRstRaw) }
     
-    $headerLine = " [Idx]  Frame    Time           Source                ¡÷ Destination           Protocol Length Info"
+    $headerLine = " [Idx]  Frame    Time           Source                â†’ Destination           Protocol Length Info"
     $divLine    = "------------------------------------------------------------------------------------------------"
     $rstPackets += $headerLine
     $rstPackets += $divLine
@@ -244,13 +244,13 @@ if ($tsharkRstRaw) {
 $rstFile = $OutputFile -replace '\.csv$', '_RST_info.txt'
 if ($rstCount -gt 0) {
     $rstPackets | Out-File -FilePath $rstFile -Encoding UTF8
-    Write-Host "      ?? ²Î­p: §ä¨ì $rstCount µ§ RST «Ê¥]¡A¤w¿W¥ß¶×¥X¦Ü¤å¦rÀÉ" -ForegroundColor Green
+    Write-Host "      ğŸ” çµ±è¨ˆ: æ‰¾åˆ° $rstCount ç­† RST å°åŒ…ï¼Œå·²ç¨ç«‹åŒ¯å‡ºè‡³æ–‡å­—æª”" -ForegroundColor Green
 } else {
-    Write-Host "      ?? ²Î­p: §ä¤£¨ì²Å¦X¹LÂo±ø¥óªº RST «Ê¥]" -ForegroundColor Green
+    Write-Host "      âŒ çµ±è¨ˆ: æ‰¾ä¸åˆ°ç¬¦åˆéæ¿¾æ¢ä»¶çš„ RST å°åŒ…" -ForegroundColor Green
 }
 
-$durationStr = "¥¼ª¾/µLªk¨ú±o"
-$timeRangeStr = "¥¼ª¾/µLªk¨ú±o"
+$durationStr = "æœªçŸ¥/ç„¡æ³•å–å¾—"
+$timeRangeStr = "æœªçŸ¥/ç„¡æ³•å–å¾—"
 if (Test-Path $global:capinfosPath) {
     try {
         $info = & $global:capinfosPath -u -a -e $PcapFile
@@ -268,47 +268,46 @@ if (Test-Path $global:capinfosPath) {
 $reportFile = $OutputFile -replace '\.csv$', '_Summary.txt'
 $reportContent = @"
 =============================================
-?? Modbus TCP ¤ÀªRÁ`µ²³ø§i
+ğŸ“œ Modbus TCP åˆ†æç¸½çµå ±å‘Š
 =============================================
-?? ¤ÀªR®É¶¡: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-?? ¨Ó·½«Ê¥]: $PcapFile
-?? °¼¿ı®É¶¡: $timeRangeStr
-? °¼¿ıªø«×: $durationStr
-?? ³q°T¥Ø¼Ğ: $TargetIP : $TargetPort (Unit ID: $UnitId)
+â±ï¸ å´éŒ„æ™‚é–“: $timeRangeStr
+â³ å´éŒ„é•·åº¦: $durationStr
+ğŸ“‚ ä¾†æºå°åŒ…: $PcapFile
+ğŸ¯ é€šè¨Šç›®æ¨™: $TargetIP : $TargetPort (Unit ID: $UnitId)
 
-?? ¤ÀªR²Î­p:
+ğŸ“Š åˆ†æçµ±è¨ˆ:
 ---------------------------------------------
-?? °Ñ»P¬d¸ßªºÁ` Port ¼Æ : $($releasedCount + $unclosedCount)
-  ?? ¤w¥¿½TÄÀ©ñ  (FIN/RST): $releasedCount
-  ? ¥¼ÄÀ©ñ (µL¥æ´¤¤¤Â_°O¿ı): $unclosedCount
-  ? RST «Ê¥]Á`¼Æ            : $rstCount (¹LÂo±ø¥ó: tcp.connection.rst)
+ğŸ“¦ åƒèˆ‡æŸ¥è©¢çš„ç¸½ Port æ•¸ : $($releasedCount + $unclosedCount)
+  âœ”ï¸ å·²æ­£ç¢ºé‡‹æ”¾  (FIN/RST): $releasedCount
+  âŒ æœªé‡‹æ”¾ (ç„¡äº¤æ¡ä¸­æ–·è¨˜éŒ„): $unclosedCount
+  ğŸ”Œ RST å°åŒ…ç¸½æ•¸            : $rstCount (éæ¿¾æ¢ä»¶: tcp.connection.rst)
 
 "@
 
 if ($unclosedCount -gt 0) {
-    $reportContent += "`n?? Äµ§i¡Gµo²{ $unclosedCount ­Ó¥¼¥¿½TÃö³¬¥i¯à¬ªº|ªº Ports¡G`n"
-    # ¨ú¥X¥¼ÄÀ©ñªº ports
+    $reportContent += "`nâš ï¸ è­¦å‘Šï¼šç™¼ç¾ $unclosedCount å€‹æœªæ­£ç¢ºé—œé–‰å¯èƒ½æ´©æ¼çš„ Portsï¼š`n"
+    # å–å‡ºæœªé‡‹æ”¾çš„ ports
     $unclosedPortsList = @()
     foreach ($p in $validUnitPorts) {
         if (-not ($closedPorts -contains $p)) { $unclosedPortsList += $p }
     }
     $reportContent += ($unclosedPortsList -join ', ') + "`n"
 
-    # ¬d¥X³o¨Ç¥¼Ãö³¬ªº Port¡A¨ì©³ Query ¹L­ş¨Ç Unit ID
-    $reportContent += "`n?? ¥¼ÄÀ©ñ Port ªº Unit ID ²Î­pªí:`n"
+    # æŸ¥å‡ºé€™äº›æœªé—œé–‰çš„ Portï¼Œåˆ°åº• Query éå“ªäº› Unit ID
+    $reportContent += "`nğŸ“‹ æœªé‡‹æ”¾ Port çš„ Unit ID çµ±è¨ˆè¡¨:`n"
     $reportContent += "Port      | Queried Unit IDs`n"
     $reportContent += "----------------------------`n"
     
     $portToUids = @{}
     
-    # ¶i¦æ¤À§å¬d¸ß¡A¥H¨¾ unclosed ports ¼Æ¶q¹L¦h¾É­P©R¥O¦C¦r¼Æ¯}ªí
+    # é€²è¡Œåˆ†æ‰¹æŸ¥è©¢ï¼Œä»¥é˜² unclosed ports æ•¸é‡éå¤šå°è‡´å‘½ä»¤åˆ—å­—æ•¸ç ´è¡¨
     $batchSize = 200
     for ($i = 0; $i -lt $unclosedPortsList.Count; $i += $batchSize) {
         $batch = $unclosedPortsList | Select-Object -Skip $i -First $batchSize
         $portFilterStr = ($batch | ForEach-Object { "tcp.srcport == $_" }) -join ' or '
         $multiUidFilter = "ip.dst == $TargetIP and tcp.dstport == $TargetPort and ($portFilterStr) and mbtcp.unit_id"
         
-        Write-Host "      [¸É¥R¤ÀªR] ¥¿¦b±½´y¥¼ÄÀ©ñ³s½u´¿¬d¸ß¹Lªº Unit IDs... (§å¦¸ $($i/$batchSize + 1))" -ForegroundColor DarkCyan
+        Write-Host "      [è£œå……åˆ†æ] æ­£åœ¨æƒææœªé‡‹æ”¾é€£ç·šæ›¾æŸ¥è©¢éçš„ Unit IDs... (æ‰¹æ¬¡ $($i/$batchSize + 1))" -ForegroundColor DarkCyan
         $portUidMappings = & $tsharkPath -r $PcapFile -Y $multiUidFilter -T fields -e tcp.srcport -e mbtcp.unit_id
         
         foreach ($line in $portUidMappings) {
@@ -333,17 +332,17 @@ if ($unclosedCount -gt 0) {
             $sortedUids = $portToUids[$p] | Sort-Object {[int]$_}
             $uidStr = $sortedUids -join ', '
         } else {
-            $uidStr = "µL / ¥¼§ä¨ì«Ê¥]"
+            $uidStr = "ç„¡ / æœªæ‰¾åˆ°å°åŒ…"
         }
         $reportContent += " $p".PadRight(10) + "| " + $uidStr + "`n"
     }
 
 } else {
-    $reportContent += "`n? ®¥³ß¡G©Ò¦³³QÀË´ú¥Xªº³s½u°ğ¤f¬Ò¤w³Q¦øªA¾¹©Î«È¤áºİ§¹¬üÄÀ©ñ¡I`n"
+    $reportContent += "`nâœ… æ­å–œï¼šæ‰€æœ‰è¢«æª¢æ¸¬å‡ºçš„é€£ç·šåŸ å£çš†å·²è¢«ä¼ºæœå™¨æˆ–å®¢æˆ¶ç«¯å®Œç¾é‡‹æ”¾ï¼`n"
 }
 
 if ($rstCount -gt 0) {
-    $reportContent += "`n? §ä¨ì $rstCount µ§²Å¦X±ø¥óªº RST «Ê¥]¡A¥H¤U¬°³Ìªñªº´Xµ§ºK¿ı (§¹¾ã½Ğ°Ñ¦Ò _RST_info.txt)¡G`n"
+    $reportContent += "`nğŸ” æ‰¾åˆ° $rstCount ç­†ç¬¦åˆæ¢ä»¶çš„ RST å°åŒ…ï¼Œä»¥ä¸‹ç‚ºæœ€è¿‘çš„å¹¾ç­†æ‘˜éŒ„ (å®Œæ•´è«‹åƒè€ƒ _RST_info.txt)ï¼š`n"
     $reportContent += "---------------------------------------------`n"
     $maxRstPreview = 10
     $previewList = $rstPackets
@@ -361,16 +360,16 @@ if ($rstCount -gt 0) {
 $reportContent | Out-File -FilePath $reportFile -Encoding UTF8
 
 Write-Host "--------------------------------------------="
-Write-Host "?? ¤ÀªR³B²z§¹¦¨¡I" -ForegroundColor Cyan
-Write-Host "?? °Ñ»P¬d¸ßªºÁ` Port ¼Æ : $($releasedCount + $unclosedCount)"
-Write-Host "  ?? ¤w¥¿½TÄÀ©ñ  (FIN/RST): $releasedCount" -ForegroundColor Green
-Write-Host "  ? ¥¼ÄÀ©ñ (µL¥æ´¤¤¤Â_°O¿ı): $unclosedCount" -ForegroundColor Red
+Write-Host "ğŸ‰ åˆ†æè™•ç†å®Œæˆï¼" -ForegroundColor Cyan
+Write-Host "ğŸ“¦ åƒèˆ‡æŸ¥è©¢çš„ç¸½ Port æ•¸ : $($releasedCount + $unclosedCount)"
+Write-Host "  âœ”ï¸ å·²æ­£ç¢ºé‡‹æ”¾  (FIN/RST): $releasedCount" -ForegroundColor Green
+Write-Host "  âŒ æœªé‡‹æ”¾ (ç„¡äº¤æ¡ä¸­æ–·è¨˜éŒ„): $unclosedCount" -ForegroundColor Red
 
 if ($unclosedCount -gt 0) {
-    Write-Host "`n?? Äµ§i¡Gµo²{ $unclosedCount ­Ó¥¼¥¿½TÃö³¬¥i¯à¬ªº|ªº Ports¡G" -ForegroundColor Red
+    Write-Host "`nâš ï¸ è­¦å‘Šï¼šç™¼ç¾ $unclosedCount å€‹æœªæ­£ç¢ºé—œé–‰å¯èƒ½æ´©æ¼çš„ Portsï¼š" -ForegroundColor Red
     Write-Host ($unclosedPortsList -join ', ') -ForegroundColor Red
     Write-Host ""
-    Write-Host "?? ¥¼ÄÀ©ñ Port ªº Unit ID ²Î­pªí:" -ForegroundColor Yellow
+    Write-Host "ğŸ“‹ æœªé‡‹æ”¾ Port çš„ Unit ID çµ±è¨ˆè¡¨:" -ForegroundColor Yellow
     Write-Host "Port      | Queried Unit IDs" -ForegroundColor Yellow
     Write-Host "----------------------------" -ForegroundColor Yellow
     foreach ($p in $unclosedPortsList) {
@@ -378,16 +377,16 @@ if ($unclosedCount -gt 0) {
             $sortedUids = $portToUids[$p] | Sort-Object {[int]$_}
             $uidStr = $sortedUids -join ', '
         } else {
-            $uidStr = "µL / ¥¼§ä¨ì«Ê¥]"
+            $uidStr = "ç„¡ / æœªæ‰¾åˆ°å°åŒ…"
         }
         Write-Host (" " + $p.PadRight(9) + "| " + $uidStr) -ForegroundColor DarkYellow
     }
 } else {
-    Write-Host "`n? ®¥³ß¡G©Ò¦³³QÀË´ú¥Xªº³s½u°ğ¤f¬Ò¤w³Q¦øªA¾¹©Î«È¤áºİ§¹¬üÄÀ©ñ¡I" -ForegroundColor Green
+    Write-Host "`nâœ… æ­å–œï¼šæ‰€æœ‰è¢«æª¢æ¸¬å‡ºçš„é€£ç·šåŸ å£çš†å·²è¢«ä¼ºæœå™¨æˆ–å®¢æˆ¶ç«¯å®Œç¾é‡‹æ”¾ï¼" -ForegroundColor Green
 }
 
 if ($rstCount -gt 0) {
-    Write-Host "`n? §ä¨ì $rstCount µ§²Å¦X±ø¥óªº RST «Ê¥]¡A¥H¤U¬°³Ìªñªº´Xµ§ºK¿ı (§¹¾ã½Ğ°Ñ¦Ò _RST_info.txt)¡G" -ForegroundColor Yellow
+    Write-Host "`nğŸ” æ‰¾åˆ° $rstCount ç­†ç¬¦åˆæ¢ä»¶çš„ RST å°åŒ…ï¼Œä»¥ä¸‹ç‚ºæœ€è¿‘çš„å¹¾ç­†æ‘˜éŒ„ (å®Œæ•´è«‹åƒè€ƒ _RST_info.txt)ï¼š" -ForegroundColor Yellow
     Write-Host "---------------------------------------------" -ForegroundColor Yellow
     $maxRstPreview = 12
     $previewList = $rstPackets
@@ -402,10 +401,10 @@ if ($rstCount -gt 0) {
 }
 
 Write-Host ""
-Write-Host "?? ¸Ô²Ó¸ê®Æ CSV ¤w¶×¥X¦Ü: $OutputFile" -ForegroundColor Yellow
-Write-Host "?? ¾ãÅéÁ`µ²³ø§i ¤w¶×¥X¦Ü: $reportFile" -ForegroundColor Yellow
+Write-Host "ğŸ“Š è©³ç´°è³‡æ–™ CSV å·²åŒ¯å‡ºè‡³: $OutputFile" -ForegroundColor Yellow
+Write-Host "ğŸ“ æ•´é«”ç¸½çµå ±å‘Š å·²åŒ¯å‡ºè‡³: $reportFile" -ForegroundColor Yellow
 if ($rstCount -gt 0) {
-    Write-Host "? ¿W¥ß RST ¸ê°T ¤w¶×¥X¦Ü: $rstFile" -ForegroundColor Yellow
+    Write-Host "ğŸ“‘ ç¨ç«‹ RST è³‡è¨Š å·²åŒ¯å‡ºè‡³: $rstFile" -ForegroundColor Yellow
 }
 Write-Host "=============================================" -ForegroundColor Cyan
 
