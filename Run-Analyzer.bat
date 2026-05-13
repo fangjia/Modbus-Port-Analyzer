@@ -25,6 +25,10 @@ SET UNIT_ID=
 REM 5. Custom output CSV file name (Leave blank to auto-generate)
 SET OUTPUT_FILE=
 
+REM 6. Use Python analyzer instead of PowerShell (0=PowerShell, 1=Python)
+SET USE_PYTHON=1
+SET PYTHON_EXE=python
+
 REM ---------------------------------------------------------
 REM EXECUTION LOGIC
 REM ---------------------------------------------------------
@@ -44,7 +48,11 @@ if not "%UNIT_ID%"=="" (
     SET UNIT_PARAM=-UnitId %UNIT_ID%
 )
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0src\Analyze-ModbusPorts.ps1" %PCAP_PARAM% -TargetIP "%TARGET_IP:"=%" -TargetPort %TARGET_PORT% %UNIT_PARAM% %OUTPUT_PARAM%
+IF "%USE_PYTHON%"=="1" (
+    %PYTHON_EXE% "%~dp0src\Analyze-ModbusPorts.py" %PCAP_PARAM% --target-ip "%TARGET_IP:"=%" --target-port %TARGET_PORT% %UNIT_PARAM% %OUTPUT_PARAM%
+) ELSE (
+    PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0src\Analyze-ModbusPorts.ps1" %PCAP_PARAM% -TargetIP "%TARGET_IP:"=%" -TargetPort %TARGET_PORT% %UNIT_PARAM% %OUTPUT_PARAM%
+)
 
 echo.
 echo =============================================
